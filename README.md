@@ -4,3 +4,5 @@ Just run a.pyw with command "python a.pyw".
 Or change the filename "a.pyw" to "a.py" then run it.  
 The interface is shown below.  
 ![Image text](https://github.com/ihuanggh/brats17-viewer/blob/master/source/interface.png)
+
+If you want to change the UI form, you should use "pyuic5" and "pyrcc5" to reconstruct the UI files.
