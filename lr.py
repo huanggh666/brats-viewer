@@ -1,2 +1,2 @@
 import numpy
-print('*********')
+print('***')
