@@ -6,7 +6,7 @@
 
 ## brats-viewer  0.1 
 A python program for reading the brats 2017 and 2018 dataset based on pyqt5.  
-Just run a.pyw with command "python anii.pyw".  
+Just run anii.pyw with command "python anii.pyw".  
 Or change the filename "anii.pyw" to "anii.py" then run it.  
 Besides, you can set "pythonw.exe" as default application to open "anii.pyw". In this case, you can run it by double click on mouse without any console shown in the screen.  
 The interface is shown below.  
