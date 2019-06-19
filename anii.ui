@@ -31,6 +31,16 @@
     </sizepolicy>
    </property>
    <layout class="QGridLayout" name="gridLayout">
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_4">
+      <property name="text">
+       <string>sagittal</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
     <item row="0" column="0">
      <widget class="QLabel" name="label_1">
       <property name="sizePolicy">
@@ -62,6 +72,26 @@
       </property>
      </widget>
     </item>
+    <item row="6" column="0">
+     <widget class="QLabel" name="label_6">
+      <property name="text">
+       <string>axial</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QLabel" name="label_5">
+      <property name="text">
+       <string>coronal</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
     <item row="0" column="1">
      <widget class="QLabel" name="label_2">
       <property name="minimumSize">
@@ -81,26 +111,6 @@
       </property>
       <property name="text">
        <string/>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="label_4">
-      <property name="text">
-       <string>sagittal</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="1">
-     <widget class="QLabel" name="label_5">
-      <property name="text">
-       <string>coronal</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -132,108 +142,7 @@
       </property>
      </widget>
     </item>
-    <item row="3" column="0">
-     <widget class="QLabel" name="label_6">
-      <property name="text">
-       <string>axial</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="1">
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <spacer name="verticalSpacer">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
-         <widget class="QSpinBox" name="spinBox">
-          <property name="maximumSize">
-           <size>
-            <width>100</width>
-            <height>20</height>
-           </size>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-          <property name="maximum">
-           <number>239</number>
-          </property>
-          <property name="value">
-           <number>120</number>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="spinBox_2">
-          <property name="maximumSize">
-           <size>
-            <width>100</width>
-            <height>20</height>
-           </size>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-          <property name="maximum">
-           <number>239</number>
-          </property>
-          <property name="value">
-           <number>120</number>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="spinBox_3">
-          <property name="maximumSize">
-           <size>
-            <width>100</width>
-            <height>20</height>
-           </size>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-          <property name="maximum">
-           <number>154</number>
-          </property>
-          <property name="value">
-           <number>78</number>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <spacer name="verticalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
-    </item>
-    <item row="3" column="1">
+    <item row="6" column="1">
      <widget class="QLabel" name="label_7">
       <property name="text">
        <string/>
@@ -242,6 +151,138 @@
        <set>Qt::AlignCenter</set>
       </property>
      </widget>
+    </item>
+    <item row="2" column="1">
+     <layout class="QVBoxLayout" name="verticalLayout_3" stretch="5,1">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetDefaultConstraint</enum>
+      </property>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <spacer name="verticalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_4">
+            <item>
+             <widget class="QSpinBox" name="spinBox">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+              <property name="maximum">
+               <number>239</number>
+              </property>
+              <property name="value">
+               <number>120</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="spinBox_2">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+              <property name="maximum">
+               <number>239</number>
+              </property>
+              <property name="value">
+               <number>120</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="spinBox_3">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+              <property name="maximum">
+               <number>154</number>
+              </property>
+              <property name="value">
+               <number>78</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QSlider" name="horizontalSlider">
+          <property name="maximum">
+           <number>100</number>
+          </property>
+          <property name="value">
+           <number>100</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="spinBox_4">
+          <property name="maximum">
+           <number>100</number>
+          </property>
+          <property name="value">
+           <number>100</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
@@ -262,6 +303,7 @@
     <addaction name="actionsave"/>
     <addaction name="actionsaveas"/>
     <addaction name="actionslicesave"/>
+    <addaction name="actioncopy_path"/>
     <addaction name="actiondirectory"/>
     <addaction name="actiondel"/>
     <addaction name="actionexit"/>
@@ -285,16 +327,23 @@
      <string>处理</string>
     </property>
     <addaction name="actionet2tc"/>
-    <addaction name="actionwt2tc"/>
     <addaction name="actiontc2wt"/>
+    <addaction name="actionwt2et"/>
     <addaction name="actionfusion"/>
     <addaction name="actionrmfocus"/>
     <addaction name="actionrmregion"/>
     <addaction name="actionrmlabel"/>
    </widget>
+   <widget class="QMenu" name="menu_4">
+    <property name="title">
+     <string>统计</string>
+    </property>
+    <addaction name="actionhist"/>
+   </widget>
    <addaction name="menu"/>
    <addaction name="menu_2"/>
    <addaction name="menu_3"/>
+   <addaction name="menu_4"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
@@ -435,9 +484,9 @@
     <string>新窗口</string>
    </property>
   </action>
-  <action name="actionwt2tc">
+  <action name="actionwt2et">
    <property name="text">
-    <string>wt2tc</string>
+    <string>wt2et</string>
    </property>
   </action>
   <action name="actiontc2wt">
@@ -498,6 +547,16 @@
   <action name="actionslicesave">
    <property name="text">
     <string>保存切片</string>
+   </property>
+  </action>
+  <action name="actionhist">
+   <property name="text">
+    <string>直方图</string>
+   </property>
+  </action>
+  <action name="actioncopy_path">
+   <property name="text">
+    <string>复制路径</string>
    </property>
   </action>
  </widget>
@@ -576,8 +635,8 @@
    <slot>nii_show()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>516</x>
-     <y>297</y>
+     <x>410</x>
+     <y>296</y>
     </hint>
     <hint type="destinationlabel">
      <x>591</x>
@@ -592,8 +651,8 @@
    <slot>nii_show()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>543</x>
-     <y>365</y>
+     <x>410</x>
+     <y>350</y>
     </hint>
     <hint type="destinationlabel">
      <x>592</x>
@@ -608,12 +667,60 @@
    <slot>nii_show()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>549</x>
-     <y>433</y>
+     <x>410</x>
+     <y>404</y>
     </hint>
     <hint type="destinationlabel">
      <x>596</x>
      <y>434</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox_4</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>351</x>
+     <y>472</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>492</x>
+     <y>473</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox_4</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>horizontalSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>492</x>
+     <y>473</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>348</x>
+     <y>472</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox_4</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>nii_show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>469</x>
+     <y>463</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>251</x>
+     <y>267</y>
     </hint>
    </hints>
   </connection>

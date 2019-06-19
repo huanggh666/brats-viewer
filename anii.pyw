@@ -2,19 +2,28 @@
 #--- contact: huanggh666@163.com
 #--- date: 2018-5-26 
 #--- envirnment: python3.6 or later
+import glob
+import os
+import subprocess
+import sys
+import time
+import zipfile
 
 import cv2
-import subprocess
-import send2trash
-import numpy as np
 import nibabel as nib
-import sys, os, glob, time
+import numpy as np
+import send2trash
 import SimpleITK as sitk
+import win32clipboard
+import win32con
+from matplotlib import pyplot as plt
+from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QImage
-from anii_ui import Ui_MainWindow   # 导入生成.py里生成的类
-from scipy import ndimage as ndimg
-from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
+from scipy import ndimage as ndimg
+
+from anii_ui import Ui_MainWindow  # 导入生成.py里生成的类
+from anii1 import W1, set_text_to_clipboard
 
 class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
@@ -30,15 +39,18 @@ class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.actionlines.triggered.connect(self.focus_lines)
         self.actionnewwindow.triggered.connect(self.new_window)
         self.actionet2tc.triggered.connect(self.et2tc)
-        self.actionwt2tc.triggered.connect(self.wt2tc)
         self.actiontc2wt.triggered.connect(self.tc2wt)
+        self.actionwt2et.triggered.connect(self.wt2et)
         self.actionslicesave.triggered.connect(self.slice_save)
         # self.actiondirectory.triggered.connect(self.open_directory)
 
+        self.horizontalSlider.hide()
+        self.spinBox_4.hide()
         self.setAcceptDrops(True)
         self.current = ''
         self.show_lines = 1
         self.slice_save_flag = -1
+        self.w_dict = {'w1':None, 'w2':None, 'w3':None, 'w4':None,}
 
     def file_open(self):
         file_dir = "E:\yan\dataset\BraTS\BRATS2017"
@@ -63,7 +75,30 @@ class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.current = filename
                 self.get_names()
                 self.nii_read()
-    
+            elif filename.endswith('.zip') or filename.endswith('.txt'):
+                isfull = True
+                for widx in range(1, 5):
+                    if self.w_dict['w'+str(widx)] is None:
+                        self.w_dict['w'+str(widx)] = W1()
+                        self.w_dict['w'+str(widx)].open_file(filename)
+                        self.w_dict['w'+str(widx)].show()
+                        isfull = False
+                        break
+                if isfull:
+                    for widx in range(1, 5):
+                        if self.w_dict['w'+str(widx)].ishidden():
+                            self.w_dict['w'+str(widx)].open_file(filename)
+                            self.w_dict['w'+str(widx)].show()
+                            isfull = False
+                            break
+                        if isfull:
+                            QMessageBox.information(self, '提示', 
+                                    '4 text viewers are shown, please close some!!!')
+                # if line_text is None:
+                #     QMessageBox.information(self, '提示', 'No dice value found!!!')
+                # else:
+                #     QMessageBox.information(self, 'mean dice', line_text)
+        
     def save(self):
         if self.current:
             img_nib = nib.AnalyzeImage(self.img_data.astype('int16'), None)
@@ -98,15 +133,15 @@ class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if self.check_status() == 'label':
             self.img_data[self.img_data == 4] = 1
             self.nii_show()
-    
-    def wt2tc(self):
-        if self.check_status() == 'label':
-            self.img_data[self.img_data == 2] = 1
-            self.nii_show()
 
     def tc2wt(self):
         if self.check_status() == 'label':
             self.img_data[self.img_data == 1] = 2
+            self.nii_show()
+    
+    def wt2et(self):
+        if self.check_status() == 'label':
+            self.img_data[self.img_data == 2] = 4
             self.nii_show()
 
     def next(self):     
@@ -143,8 +178,8 @@ class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     return
                 self.img_data = img_nib.get_data()
                 if self.img_data.min()<0:
-                    mask = np.asarray(self.img_data==0, 'int')
-                    self.img_data += self.img_data.min()
+                    mask = np.array(self.img_data==0, np.uint8)
+                    self.img_data = self.img_data - self.img_data.min()
                     self.img_data = self.img_data * (1-mask)
                 self.nii_show()
             elif '.mha' in self.current:
@@ -158,7 +193,7 @@ class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
             return None
         elif len(self.img_data) == 2:
             return 'fusion'
-        elif np.max(self.img_data) in [1, 2, 3, 4, 5]:
+        elif np.max(self.img_data) in [1, 2, 3, 4, 5] and np.min(self.img_data) == 0:
             return 'label'
         else:
             return 'modal'
@@ -166,6 +201,8 @@ class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def nii_show(self):
         status = self.check_status()
         if status == 'fusion':
+            self.horizontalSlider.show()
+            self.spinBox_4.show()
             self.img = (255 * (self.img_data[0] / self.img_data[0].max())).astype('uint8')
             slice_img_1, slice_img_2, slice_img_3 = self.nii_slice()
             self.img = (255 * (self.img_data[1] / 4)).astype('uint8')
@@ -174,6 +211,8 @@ class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.fusion_show(slice_img_2, slice_seg_2, self.label_2)
             self.fusion_show(slice_img_3, slice_seg_3, self.label_3)
         elif status == 'label':
+            self.horizontalSlider.hide()
+            self.spinBox_4.hide()
             s1 = (self.img_data == 1).sum()
             s2 = (self.img_data == 2).sum()
             s4 = (self.img_data == 4).sum()
@@ -184,8 +223,15 @@ class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.nii_seg_show(slice_2, self.label_2)
             self.nii_seg_show(slice_3, self.label_3)
         elif status == 'modal':
+            self.horizontalSlider.hide()
+            self.spinBox_4.hide()
             T = np.max(self.img_data)
             self.label_7.setText('value max:{0}'.format(T))
+            if self.img_data.min()<0:
+                mask = np.array(self.img_data==0, np.uint8)
+                self.img_data = self.img_data - self.img_data.min()
+                self.img_data = self.img_data * (1-mask)
+                T = T - self.img_data.min()
             self.img = (255 * (self.img_data / T)).astype('uint8')
             slice_1, slice_2, slice_3 = self.nii_slice()
             self.nii_modal_show(slice_1, self.label_1)
@@ -229,17 +275,24 @@ class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
         
     
     def fusion(self):
-        if self.check_status() != 'modal':
-            return
-        file_dir = "E:\Master\dataset\BraTS\BRATS2017"
-        if self.current:
-            (file_dir, file_name) = os.path.split(self.current)
-        img_name = QFileDialog.getOpenFileName(self, "打开", file_dir, '图像(*.nii *.nii.gz)')
-        if img_name[0]:
-            seg = nib.load(img_name[0]).get_data()
-            if seg.max() < 10:
-                self.img_data = np.stack([self.img_data, seg])
+        if self.check_status() == 'label':
+            file_dir = "E:\yan\dataset\BraTS\BRATS2017"
+            img_name = QFileDialog.getOpenFileName(self, "打开", file_dir, '图像(*.nii *.nii.gz)')
+            if img_name[0]:
+                modal = nib.load(img_name[0]).get_data()
+                self.img_data = np.stack([modal, self.img_data])
                 self.nii_show()
+                    
+        elif self.check_status() == 'modal':
+            file_dir = "E:\yan\dataset\BraTS\BRATS2017"
+            if self.current:
+                (file_dir, file_name) = os.path.split(self.current)
+            img_name = QFileDialog.getOpenFileName(self, "打开", file_dir, '图像(*.nii *.nii.gz)')
+            if img_name[0]:
+                seg = nib.load(img_name[0]).get_data()
+                if seg.max() < 10:
+                    self.img_data = np.stack([self.img_data, seg])
+                    self.nii_show()
     
     def slice_save(self):
         if self.check_status() == None:
@@ -256,7 +309,7 @@ class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
             dire_ls = ['sagittal','coronal','axial']
             file_dir, file_name = os.path.split(self.current)
             namepart = file_name.split('.')[0]
-            save_path = f'{desktoppath}/{namepart}_{dire_ls[self.slice_save_flag]}{slice_ls[self.slice_save_flag]}.png'
+            save_path = f'{desktoppath}/{namepart}_{dire_ls[self.slice_save_flag]}_{slice_ls[self.slice_save_flag]}.png'
             if len(img.shape) == 2:
                 cv2.imwrite(save_path, img)
                 self.slice_save_flag += 1   #;print(save_path)
@@ -314,7 +367,8 @@ class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
         img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
         seg_mask = cv2.cvtColor(seg, cv2.COLOR_GRAY2BGR)
         seg = cv2.applyColorMap(seg, cv2.COLORMAP_RAINBOW)
-        img[seg_mask > 0] = seg[seg_mask > 0]
+        alpha = self.spinBox_4.value()/100
+        img[seg_mask > 0] = ((1-alpha)*img[seg_mask > 0] + alpha*seg[seg_mask > 0]).astype('uint8')
         fusion = np.rot90(img).copy()
         img_h, img_w = fusion.shape[:2]
         if img_w >= 200 and img_h >= 200:
@@ -376,12 +430,25 @@ class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
             
     @staticmethod
     def new_window():
-        subprocess.Popen(['pythonw', sys.argv[0]])
-    
+        path_sys = sys.argv[0]
+        if path_sys.endswith('.pyw') or path_sys.endswith('.py'):
+            subprocess.Popen(['pythonw', path_sys])
+        elif path_sys.endswith('.exe'):
+            subprocess.Popen(path_sys)
     
 class Subwindow(Mywindow):
     def __init__(self):
         super().__init__()
+        
+        self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.show_menu)
+        self.context_menu = QtWidgets.QMenu(self)
+        self.menu_copy_path = self.context_menu.addAction('复制路径')
+        self.menu_samesp = self.context_menu.addAction('还原样本')
+        self.menu_nextsp = self.context_menu.addAction('下一样本')
+        self.menu_copy_path.triggered.connect(self.copy_path)
+        self.menu_samesp.triggered.connect(self.same_sample)
+        self.menu_nextsp.triggered.connect(self.next_sample)
         
         self.actiondirectory.triggered.connect(self.open_directory)
         self.actionopeninnew.triggered.connect(self.open_in_new)
@@ -393,9 +460,14 @@ class Subwindow(Mywindow):
         self.actionnextsp.triggered.connect(self.next_sample)
         self.actionlastsp.triggered.connect(self.last_sample)
         self.actionsamesp.triggered.connect(self.same_sample)
+        self.actionhist.triggered.connect(self.histotram)
+        self.actioncopy_path.triggered.connect(self.copy_path)
         
         self.remove_region_flag = False
         self.remove_label_flag = False
+        
+    def show_menu(self, pos):
+        self.context_menu.exec_(QtGui.QCursor.pos())
         
     def next_sample(self):
         self.next_last(num_add=1)
@@ -419,6 +491,7 @@ class Subwindow(Mywindow):
         if idx >= n:
             idx = 0
         self.current = file_names[idx]
+        self.get_names()
         self.nii_read()
         
     def open_directory(self):
@@ -439,13 +512,13 @@ class Subwindow(Mywindow):
         x = self.spinBox.value()
         y = self.spinBox_2.value()
         z = self.spinBox_3.value()
-        vd = dict(x=x,y=y,z=z,current=self.current)
+        vd = dict(x=x, y=y, z=z, current=self.current)
         with open('viewinfo', 'w') as file:
             file.write(str(vd))
-        self.statusBar().showMessage('slice idxes have saved !')
+        self.statusBar().showMessage('viewinfo have saved !')
             
     def restore_slice_num(self):
-        if os.path.isfile('slicenum'):
+        if os.path.isfile('viewinfo'):
             with open('viewinfo', 'r') as file:
                 vd = eval(file.read())
             self.spinBox.setValue(vd['x'])
@@ -462,6 +535,7 @@ class Subwindow(Mywindow):
         if os.path.isfile(f'{cdir}/{fname}'):
             self.current = f'{cdir}/{fname}'
             self.nii_read()
+            self.restore_slice_num()
     
     def remove_focus_region(self):
         if self.show_lines != 1:
@@ -533,7 +607,21 @@ class Subwindow(Mywindow):
             else:
                 self.nii_mouse(event.pos())
             
+    def histotram(self):
+        if self.check_status() == 'modal':
+            M = self.img_data.max()
+            hist = ndimg.histogram(self.img_data, 1, M, M-1)
+            plt.bar(range(1,M), hist, color='r')
+            plt.title('Histogram')
+            plt.show()
+            
+    def copy_path(self):
+        if self.current:
+            path = self.current
+            set_text_to_clipboard(path)
+            QMessageBox.information(self, '提示', f'已复制文件路径:{path}')
 
+    
 def setting(window):
     window.current = sys.argv[1]
     window.get_names()
