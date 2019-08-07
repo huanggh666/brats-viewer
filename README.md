@@ -1,3 +1,6 @@
+## brats-viewer update 19.8.7
+* To facilitate the view of the results downloaded online, a feature that draging the directory to the mainwindow to find the zip file automatically.
+
 ## brats-viewer update 
 * ".mha" files of brats2015 are supported to open.
 * Dragentering file is supported. We can drag supported file to mainwindow to open it conveniently.
