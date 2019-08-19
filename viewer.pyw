@@ -22,8 +22,8 @@ from PyQt5.QtGui import QImage
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
 from scipy import ndimage as ndimg
 
-from anii_ui import Ui_MainWindow  # 导入生成.py里生成的类
-from anii1 import W1, set_text_to_clipboard
+from viewer_ui import Ui_MainWindow  # 导入生成.py里生成的类
+from textviewer import W1, set_text_to_clipboard
 
 class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
@@ -53,7 +53,7 @@ class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.w_dict = {'w1':None, 'w2':None, 'w3':None, 'w4':None,}
 
     def file_open(self):
-        file_dir = "E:\yan\dataset\BraTS\BRATS2017"
+        file_dir = "E:\yan\dataset\BraTS"
         if self.current:
             (file_dir, file_name) = os.path.split(self.current)
             
@@ -75,7 +75,8 @@ class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.current = filename
                 self.get_names()
                 self.nii_read()
-            elif filename.endswith('.zip') or filename.endswith('.txt'):
+            elif (filename.endswith('.zip') or filename.endswith('.txt')
+                  or os.path.isdir(filename)):
                 isfull = True
                 for widx in range(1, 5):
                     if self.w_dict['w'+str(widx)] is None:
@@ -86,18 +87,14 @@ class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         break
                 if isfull:
                     for widx in range(1, 5):
-                        if self.w_dict['w'+str(widx)].ishidden():
+                        if self.w_dict['w'+str(widx)].isHidden():
                             self.w_dict['w'+str(widx)].open_file(filename)
                             self.w_dict['w'+str(widx)].show()
                             isfull = False
                             break
-                        if isfull:
-                            QMessageBox.information(self, '提示', 
-                                    '4 text viewers are shown, please close some!!!')
-                # if line_text is None:
-                #     QMessageBox.information(self, '提示', 'No dice value found!!!')
-                # else:
-                #     QMessageBox.information(self, 'mean dice', line_text)
+                    if isfull:
+                        QMessageBox.information(self, '提示', 
+                                '4 text viewers are shown, please close some!!!')
         
     def save(self):
         if self.current:
@@ -172,7 +169,7 @@ class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
         '读取.nii或者.mha图像'
         print(self.current)#--------------
         if os.path.isfile(self.current):
-            if '.nii' in self.current:
+            if self.current.endswith('.nii'):
                 img_nib = nib.load(self.current)
                 if len(img_nib.get_data().shape) != 3:
                     return
@@ -182,7 +179,7 @@ class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.img_data = self.img_data - self.img_data.min()
                     self.img_data = self.img_data * (1-mask)
                 self.nii_show()
-            elif '.mha' in self.current:
+            elif self.current.endswith('.mha'):
                 img_mha = sitk.ReadImage(self.current)
                 img_mha = sitk.GetArrayFromImage(img_mha)
                 self.img_data = np.transpose(img_mha, [2,1,0])
@@ -275,24 +272,30 @@ class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
         
     
     def fusion(self):
-        if self.check_status() == 'label':
-            file_dir = "E:\yan\dataset\BraTS\BRATS2017"
-            img_name = QFileDialog.getOpenFileName(self, "打开", file_dir, '图像(*.nii *.nii.gz)')
-            if img_name[0]:
-                modal = nib.load(img_name[0]).get_data()
-                self.img_data = np.stack([modal, self.img_data])
-                self.nii_show()
-                    
-        elif self.check_status() == 'modal':
-            file_dir = "E:\yan\dataset\BraTS\BRATS2017"
+        def read_data(filename):
+            if filename.endswith('.nii'):
+                img_nib = nib.load(filename)
+                if len(img_nib.get_data().shape) != 3:
+                    return
+                return img_nib.get_data()
+            elif filename.endswith('.mha'):
+                img_mha = sitk.ReadImage(filename)
+                img_mha = sitk.GetArrayFromImage(img_mha)
+                img_mha = np.transpose(img_mha, [2,1,0])
+                return img_mha
+        chk_state = self.check_status()
+        if chk_state == 'label' or chk_state == 'modal':
+            file_dir = "E:\yan\dataset\BraTS"
             if self.current:
                 (file_dir, file_name) = os.path.split(self.current)
-            img_name = QFileDialog.getOpenFileName(self, "打开", file_dir, '图像(*.nii *.nii.gz)')
+            img_name = QFileDialog.getOpenFileName(self, "打开", file_dir, '图像(*.nii *.nii.gz *.mha)')
             if img_name[0]:
-                seg = nib.load(img_name[0]).get_data()
-                if seg.max() < 10:
-                    self.img_data = np.stack([self.img_data, seg])
-                    self.nii_show()
+                data = read_data(img_name[0])
+                if chk_state == 'modal':
+                    self.img_data = np.stack([self.img_data, data])
+                elif chk_state == 'label':
+                    self.img_data = np.stack([data, self.img_data])
+                self.nii_show()
     
     def slice_save(self):
         if self.check_status() == None:
@@ -436,7 +439,12 @@ class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
         elif path_sys.endswith('.exe'):
             subprocess.Popen(path_sys)
     
-class Subwindow(Mywindow):
+    def closeEvent(self, event):
+        event.accept()
+        os._exit(0)
+
+
+class ExtendWindow(Mywindow):
     def __init__(self):
         super().__init__()
         
@@ -620,8 +628,8 @@ class Subwindow(Mywindow):
             path = self.current
             set_text_to_clipboard(path)
             QMessageBox.information(self, '提示', f'已复制文件路径:{path}')
+            
 
-    
 def setting(window):
     window.current = sys.argv[1]
     window.get_names()
@@ -636,7 +644,7 @@ def setting(window):
 
 def run():
     app = QtWidgets.QApplication(sys.argv)
-    window = Subwindow()
+    window = ExtendWindow()
     window.show()
 
     if len(sys.argv) >= 2:

@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\code\python\le704_nii/anii.ui'
+# Form implementation generated from reading ui file 'E:\code\vscode\nii_viewer/viewer.ui'
 #
-# Created by: PyQt5 UI code generator 5.9.2
+# Created by: PyQt5 UI code generator 5.12
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -233,8 +234,13 @@ class Ui_MainWindow(object):
         self.menu.addAction(self.actionsave)
         self.menu.addAction(self.actionsaveas)
         self.menu.addAction(self.actionslicesave)
+        self.menu.addSeparator()
         self.menu.addAction(self.actioncopy_path)
         self.menu.addAction(self.actiondirectory)
+        self.menu.addSeparator()
+        self.menu.addAction(self.actionback)
+        self.menu.addAction(self.actionnext)
+        self.menu.addSeparator()
         self.menu.addAction(self.actiondel)
         self.menu.addAction(self.actionexit)
         self.menu_2.addAction(self.actionnormalize)
@@ -330,4 +336,5 @@ class Ui_MainWindow(object):
         self.actionhist.setText(_translate("MainWindow", "直方图"))
         self.actioncopy_path.setText(_translate("MainWindow", "复制路径"))
 
-import anii_rc
+
+import viewer_rc

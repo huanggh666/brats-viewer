@@ -20,7 +20,7 @@
    <string>HAI-图像</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="anii.qrc">
+   <iconset resource="viewer.qrc">
     <normaloff>:/icons/source/1.jpg</normaloff>:/icons/source/1.jpg</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -303,8 +303,13 @@
     <addaction name="actionsave"/>
     <addaction name="actionsaveas"/>
     <addaction name="actionslicesave"/>
+    <addaction name="separator"/>
     <addaction name="actioncopy_path"/>
     <addaction name="actiondirectory"/>
+    <addaction name="separator"/>
+    <addaction name="actionback"/>
+    <addaction name="actionnext"/>
+    <addaction name="separator"/>
     <addaction name="actiondel"/>
     <addaction name="actionexit"/>
    </widget>
@@ -377,7 +382,7 @@
   </widget>
   <action name="actionopen">
    <property name="icon">
-    <iconset resource="anii.qrc">
+    <iconset resource="viewer.qrc">
      <normaloff>:/icons/source/8.png</normaloff>:/icons/source/8.png</iconset>
    </property>
    <property name="text">
@@ -400,7 +405,7 @@
   </action>
   <action name="actionnext">
    <property name="icon">
-    <iconset resource="anii.qrc">
+    <iconset resource="viewer.qrc">
      <normaloff>:/icons/source/2.png</normaloff>:/icons/source/2.png</iconset>
    </property>
    <property name="text">
@@ -412,7 +417,7 @@
   </action>
   <action name="actionback">
    <property name="icon">
-    <iconset resource="anii.qrc">
+    <iconset resource="viewer.qrc">
      <normaloff>:/icons/source/1.png</normaloff>:/icons/source/1.png</iconset>
    </property>
    <property name="text">
@@ -424,7 +429,7 @@
   </action>
   <action name="actionsaveas">
    <property name="icon">
-    <iconset resource="anii.qrc">
+    <iconset resource="viewer.qrc">
      <normaloff>:/icons/source/6.png</normaloff>:/icons/source/6.png</iconset>
    </property>
    <property name="text">
@@ -436,7 +441,7 @@
   </action>
   <action name="actiondel">
    <property name="icon">
-    <iconset resource="anii.qrc">
+    <iconset resource="viewer.qrc">
      <normaloff>:/icons/source/13.png</normaloff>:/icons/source/13.png</iconset>
    </property>
    <property name="text">
@@ -448,7 +453,7 @@
   </action>
   <action name="actionfusion">
    <property name="icon">
-    <iconset resource="anii.qrc">
+    <iconset resource="viewer.qrc">
      <normaloff>:/icons/source/14.png</normaloff>:/icons/source/14.png</iconset>
    </property>
    <property name="text">
@@ -457,7 +462,7 @@
   </action>
   <action name="actionet2tc">
    <property name="icon">
-    <iconset resource="anii.qrc">
+    <iconset resource="viewer.qrc">
      <normaloff>:/icons/source/et.png</normaloff>:/icons/source/et.png</iconset>
    </property>
    <property name="text">
@@ -561,7 +566,7 @@
   </action>
  </widget>
  <resources>
-  <include location="anii.qrc"/>
+  <include location="viewer.qrc"/>
  </resources>
  <connections>
   <connection>
