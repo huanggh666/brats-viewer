@@ -169,7 +169,7 @@ class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
         '读取.nii或者.mha图像'
         print(self.current)#--------------
         if os.path.isfile(self.current):
-            if self.current.endswith('.nii'):
+            if self.current.endswith('.nii.gz') or self.current.endswith('.nii.gz'):
                 img_nib = nib.load(self.current)
                 if len(img_nib.get_data().shape) != 3:
                     return
