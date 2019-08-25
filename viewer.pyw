@@ -23,7 +23,7 @@ from PyQt5.QtWidgets import QFileDialog, QMessageBox
 from scipy import ndimage as ndimg
 
 from viewer_ui import Ui_MainWindow  # 导入生成.py里生成的类
-from textviewer import W1, set_text_to_clipboard
+from textviewer import WText, set_text_to_clipboard
 
 class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
@@ -57,12 +57,16 @@ class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if self.current:
             (file_dir, file_name) = os.path.split(self.current)
             
-        img_name = QFileDialog.getOpenFileName(self, "打开", file_dir, '3D图像(*.nii *.nii.gz *.mha)')
-        if img_name[0] != '':
-            print(img_name[0])
-            self.current = img_name[0].replace('\\', '/')
-            self.get_names()
-            self.nii_read()
+        get_filename = QFileDialog.getOpenFileName(self, "打开", file_dir, 
+                        '3D图像(*.nii *.nii.gz *.mha);;文件(*.zip *.txt)')
+        if get_filename[0] != '':
+            if get_filename[1] == '3D图像(*.nii *.nii.gz *.mha)':
+                print(get_filename[0])
+                self.current = get_filename[0].replace('\\', '/')
+                self.get_names()
+                self.nii_read()
+            elif get_filename[1] == '文件(*.zip *.txt)':
+                self.open_in_textviewer(get_filename[0])
     
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls():
@@ -77,24 +81,27 @@ class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.nii_read()
             elif (filename.endswith('.zip') or filename.endswith('.txt')
                   or os.path.isdir(filename)):
-                isfull = True
-                for widx in range(1, 5):
-                    if self.w_dict['w'+str(widx)] is None:
-                        self.w_dict['w'+str(widx)] = W1()
-                        self.w_dict['w'+str(widx)].open_file(filename)
-                        self.w_dict['w'+str(widx)].show()
-                        isfull = False
-                        break
-                if isfull:
-                    for widx in range(1, 5):
-                        if self.w_dict['w'+str(widx)].isHidden():
-                            self.w_dict['w'+str(widx)].open_file(filename)
-                            self.w_dict['w'+str(widx)].show()
-                            isfull = False
-                            break
-                    if isfull:
-                        QMessageBox.information(self, '提示', 
-                                '4 text viewers are shown, please close some!!!')
+                self.open_in_textviewer(filename)
+
+    def open_in_textviewer(self, filename):
+        isfull = True
+        for widx in range(1, 5):
+            if self.w_dict['w'+str(widx)] is None:
+                self.w_dict['w'+str(widx)] = WText(filename)
+                self.w_dict['w'+str(widx)].open_file()
+                self.w_dict['w'+str(widx)].show()
+                isfull = False
+                break
+        if isfull:
+            for widx in range(1, 5):
+                if self.w_dict['w'+str(widx)].isHidden():
+                    self.w_dict['w'+str(widx)].open_file(filename)
+                    self.w_dict['w'+str(widx)].show()
+                    isfull = False
+                    break
+            if isfull:
+                QMessageBox.information(self, '提示', 
+                        '4 text viewers are shown, please close some!!!')
         
     def save(self):
         if self.current:

@@ -33,6 +33,63 @@
         </widget>
        </item>
        <item>
+        <widget class="QComboBox" name="comboBox">
+         <property name="whatsThis">
+          <string>选择显示的内容</string>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="autoFillBackground">
+          <bool>false</bool>
+         </property>
+         <property name="editable">
+          <bool>false</bool>
+         </property>
+         <property name="currentText">
+          <string>Mean</string>
+         </property>
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <property name="modelColumn">
+          <number>0</number>
+         </property>
+         <item>
+          <property name="text">
+           <string>Mean</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>StdDev</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Median</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>25quantile</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>75quantile</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_3">
+         <property name="text">
+          <string>自动复制（开）</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="pushButton_2">
          <property name="text">
           <string>关闭</string>

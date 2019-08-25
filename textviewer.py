@@ -8,16 +8,22 @@ from glob import glob
 from textviewer_ui import Ui_Form
 
 
-class W1(QtWidgets.QWidget, Ui_Form):
-    def __init__(self):
+class WText(QtWidgets.QWidget, Ui_Form):
+    def __init__(self, filename=''):
         super().__init__()
         self.setupUi(self)
     
         self.pushButton_1.released.connect(self.file_open_on_botton)
+        self.pushButton_3.released.connect(self.change_autocopy)
+        self.comboBox.currentTextChanged.connect(self.open_file)
 
         self.setAcceptDrops(True)
-        self.filename = ''
-    
+        self.filename = filename
+        self.mode_ls = []
+        for i in range(self.comboBox.count()):
+            self.mode_ls.append(self.comboBox.itemText(i))
+        self.autocopy = 1
+
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls():
              event.acceptProposedAction()
@@ -25,7 +31,12 @@ class W1(QtWidgets.QWidget, Ui_Form):
     def dropEvent(self, event):
         if event.mimeData().hasUrls():
             self.filename = event.mimeData().urls()[0].toLocalFile()
-            self.open_file(self.filename)
+            self.open_file()
+
+    def change_autocopy(self):
+        botton_text = ['自动复制（开）', '自动复制（关）']
+        self.pushButton_3.setText(botton_text[self.autocopy])
+        self.autocopy = 1 - self.autocopy
 
     def file_open_on_botton(self):
         file_dir = "F:\Xvalidation\\a3"
@@ -33,14 +44,19 @@ class W1(QtWidgets.QWidget, Ui_Form):
             (file_dir, file_name) = os.path.split(self.filename)
             
         open_filename = QtWidgets.QFileDialog.getOpenFileName(
-                    self, "打开", file_dir, 'zip和txt(*.zip *.txt)')
+                    self, "打开", file_dir, 'zip或text(*.zip *.txt)')
         if open_filename[0] != '':
             self.filename = open_filename[0].replace('\\', '/')
-            self.open_file(self.filename)
+            self.open_file()
 
-    def open_file(self, filename):
+    def open_file(self):
+        filename = self.filename
         if filename.endswith('.zip'):
-            self.text, self.num = get_mean_dice_from_zip(filename)
+            mode = self.comboBox.currentText()
+            text_dict, self.num = get_dice_from_zip(filename, self.mode_ls)
+            self.text = text_dict[mode]
+            if self.autocopy:
+                set_text_to_clipboard(self.text)
             self.show_text_of_zip()
             self.textBrowser.append(f'file: {filename}')
         elif filename.endswith('.txt'):
@@ -50,7 +66,8 @@ class W1(QtWidgets.QWidget, Ui_Form):
         elif os.path.isdir(filename):
             filenames = glob(f'{filename}/Results*.zip')
             if len(filenames):
-                self.open_file(filenames[0])
+                self.filename = filenames[0]
+                self.open_file()
             else:
                 self.textBrowser.setText(
                             f"No zip file is found in the {filename}!!!")
@@ -82,7 +99,9 @@ def set_text_to_clipboard(info):
     win32clipboard.SetClipboardData(win32con.CF_UNICODETEXT, info)
     win32clipboard.CloseClipboard()
 
-def get_mean_dice_from_zip(zip_name):
+def get_dice_from_zip(zip_name, mode_ls='Mean'):
+    if not hasattr(mode_ls, '__iter__'):
+        mode_ls = [mode_ls]
     if not os.path.isfile(zip_name):
         return None
     myzip = zipfile.ZipFile(zip_name)
@@ -95,15 +114,17 @@ def get_mean_dice_from_zip(zip_name):
     lines = myzip.read(fcsv[0]).splitlines()
     
     num = 0
+    line_dict = {}
     for line in lines:
         line = line.decode('utf-8')
-        if 'Mean' in line[:5]:
-            line_ls = line.split(',')[1:]
-            line_text = '\t'.join(line_ls)
-            set_text_to_clipboard(line_text)
+        for mode in mode_ls:
+            if mode in line[:12]:
+                line_ls = line.split(',')[1:]
+                line_dict[mode] = '\t'.join(line_ls)
+                # set_text_to_clipboard(line_text)
         if 'Brats1' == line[:6]:
             num += 1
-    return line_text, num
+    return line_dict, num
 
 def get_mean_dice_from_txt(txt_name):
     with open(txt_name, 'r') as ftxt:
