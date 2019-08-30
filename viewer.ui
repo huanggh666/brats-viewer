@@ -319,6 +319,7 @@
     </property>
     <addaction name="actionnormalize"/>
     <addaction name="actionlines"/>
+    <addaction name="actionarrows"/>
     <addaction name="actionnewwindow"/>
     <addaction name="actionopeninnew"/>
     <addaction name="actionsaveslinum"/>
@@ -459,6 +460,9 @@
    <property name="text">
     <string>融合</string>
    </property>
+   <property name="toolTip">
+    <string>将标签图（多模态图）融合到多模态（标签图）图中</string>
+   </property>
   </action>
   <action name="actionet2tc">
    <property name="icon">
@@ -466,7 +470,10 @@
      <normaloff>:/icons/source/et.png</normaloff>:/icons/source/et.png</iconset>
    </property>
    <property name="text">
-    <string>et2tc</string>
+    <string>ET2TC</string>
+   </property>
+   <property name="toolTip">
+    <string>将ET区域转为TC区域</string>
    </property>
   </action>
   <action name="actionsave">
@@ -491,12 +498,18 @@
   </action>
   <action name="actionwt2et">
    <property name="text">
-    <string>wt2et</string>
+    <string>WT2ET</string>
+   </property>
+   <property name="toolTip">
+    <string>将WT区域转到ET区域</string>
    </property>
   </action>
   <action name="actiontc2wt">
    <property name="text">
-    <string>tc2wt</string>
+    <string>TC2WT</string>
+   </property>
+   <property name="toolTip">
+    <string>将TC区域转为WT区域</string>
    </property>
   </action>
   <action name="actiondirectory">
@@ -513,45 +526,75 @@
    <property name="text">
     <string>保存视图</string>
    </property>
+   <property name="toolTip">
+    <string>保存当前的视图信息（切片序号，文件名）</string>
+   </property>
   </action>
   <action name="actionrestoreslinum">
    <property name="text">
     <string>还原idx</string>
+   </property>
+   <property name="toolTip">
+    <string>从视图信息中还原切片序号</string>
    </property>
   </action>
   <action name="actionrmregion">
    <property name="text">
     <string>清除区域（选）</string>
    </property>
+   <property name="toolTip">
+    <string>清除用鼠标选择的区域</string>
+   </property>
   </action>
   <action name="actionrmlabel">
    <property name="text">
-    <string>清除标签</string>
+    <string>清除标签（选）</string>
+   </property>
+   <property name="toolTip">
+    <string>清除用鼠标选择的标签</string>
    </property>
   </action>
   <action name="actionrmfocus">
    <property name="text">
     <string>清除区域（线）</string>
    </property>
+   <property name="toolTip">
+    <string>清除指示线交点所在的区域</string>
+   </property>
   </action>
   <action name="actionnextsp">
    <property name="text">
     <string>下一样本</string>
+   </property>
+   <property name="toolTip">
+    <string>如果当前文件是按样本文件夹保存，则跳转到下一个样本的同一模态</string>
    </property>
   </action>
   <action name="actionlastsp">
    <property name="text">
     <string>上一样本</string>
    </property>
+   <property name="toolTip">
+    <string>如果当前文件是按样本文件夹保存，则跳转到上一个样本的同一模态</string>
+   </property>
   </action>
   <action name="actionsamesp">
    <property name="text">
     <string>同样本</string>
    </property>
+   <property name="toolTip">
+    <string>在当前文件夹中寻找保存的视图信息中的同名样本</string>
+   </property>
   </action>
   <action name="actionslicesave">
    <property name="text">
     <string>保存切片</string>
+   </property>
+   <property name="toolTip">
+    <string>保存当前界面的三个方向的切片图像到桌面</string>
+   </property>
+   <property name="whatsThis">
+    <string/>
    </property>
   </action>
   <action name="actionhist">
@@ -562,6 +605,11 @@
   <action name="actioncopy_path">
    <property name="text">
     <string>复制路径</string>
+   </property>
+  </action>
+  <action name="actionarrows">
+   <property name="text">
+    <string>方向箭头</string>
    </property>
   </action>
  </widget>

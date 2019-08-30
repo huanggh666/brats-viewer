@@ -1,5 +1,5 @@
 ## brats-viewer update 19.8.7
-* To facilitate the view of the results downloaded online, a feature that draging the directory to the mainwindow to find the zip file automatically.
+* To facilitate getting the mean dice scores of the results downloaded online, a feature that draging the directory to the mainwindow to find the zip file automatically is added.
 
 ## brats-viewer update 
 * ".mha" files of brats2015 are supported to open.

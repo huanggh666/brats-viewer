@@ -30,7 +30,7 @@ class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
         super(Mywindow,self).__init__()
         self.setupUi(self)
         # self.setCentralWidget(self.label)
-        
+
         self.actionsaveas.triggered.connect(self.saveas)
         self.actionsave.triggered.connect(self.save)
         self.actiondel.triggered.connect(self.delete)
@@ -42,6 +42,7 @@ class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.actiontc2wt.triggered.connect(self.tc2wt)
         self.actionwt2et.triggered.connect(self.wt2et)
         self.actionslicesave.triggered.connect(self.slice_save)
+        self.actionarrows.triggered.connect(self.show_arrow_func)
         # self.actiondirectory.triggered.connect(self.open_directory)
 
         self.horizontalSlider.hide()
@@ -49,6 +50,7 @@ class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setAcceptDrops(True)
         self.current = ''
         self.show_lines = 1
+        self.show_arrow = 1
         self.slice_save_flag = -1
         self.w_dict = {'w1':None, 'w2':None, 'w3':None, 'w4':None,}
 
@@ -264,9 +266,13 @@ class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
         return slice_i
     
     def focus_lines(self):
-        self.show_lines = self.show_lines * -1
+        self.show_lines = 1- self.show_lines
         self.nii_show()
     
+    def show_arrow_func(self):
+        self.show_arrow = 1 - self.show_arrow
+        self.nii_show()
+        
     def normalize(self):
         if self.check_status() == 'modal':
             pixels = self.img_data[self.img_data > 0]
@@ -333,9 +339,10 @@ class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
         img_h, img_w = img.shape
         if img_w >= 200 and img_h >= 200:
             img = slice.copy()
-            img = cv2.arrowedLine(img, (10,10), (10,20), 80)
-            img = cv2.arrowedLine(img, (10,10), (20,10), 80)
-        else:
+            if self.show_arrow:
+                img = cv2.arrowedLine(img, (10,10), (10,20), 80)
+                img = cv2.arrowedLine(img, (10,10), (20,10), 80)
+        elif self.show_arrow:
             img = cv2.arrowedLine(img, (10,img_h-1-10), (20,img_h-1-10), 80)
             img = cv2.arrowedLine(img, (10,img_h-1-10), (10,img_h-1-20), 80)
         self.slice_save_depend_on_flag(img)
@@ -354,9 +361,10 @@ class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
         img_h, img_w = img.shape
         if img_w >= 200 and img_h >= 200:
             img = slice.copy()
-            img = cv2.arrowedLine(img, (10,10), (10,20), 80)
-            img = cv2.arrowedLine(img, (10,10), (20,10), 80)
-        else:
+            if self.show_arrow:
+                img = cv2.arrowedLine(img, (10,10), (10,20), 80)
+                img = cv2.arrowedLine(img, (10,10), (20,10), 80)
+        elif self.show_arrow:
             img = cv2.arrowedLine(img, (10,img_h-1-10), (20,img_h-1-10), 80)
             img = cv2.arrowedLine(img, (10,img_h-1-10), (10,img_h-1-20), 80)
         mask = img == 0
@@ -383,9 +391,10 @@ class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
         img_h, img_w = fusion.shape[:2]
         if img_w >= 200 and img_h >= 200:
             fusion = img.copy()
-            fusion = cv2.arrowedLine(fusion, (10,10), (10,20), 200)
-            fusion = cv2.arrowedLine(fusion, (10,10), (20,10), 200)
-        else:
+            if self.show_arrow:
+                fusion = cv2.arrowedLine(fusion, (10,10), (10,20), 200)
+                fusion = cv2.arrowedLine(fusion, (10,10), (20,10), 200)
+        elif self.show_arrow:
             fusion = cv2.arrowedLine(fusion, (10,img_h-1-10), (20,img_h-1-10), 200)
             fusion = cv2.arrowedLine(fusion, (10,img_h-1-10), (10,img_h-1-20), 200)
         self.slice_save_depend_on_flag(img)
@@ -459,7 +468,7 @@ class ExtendWindow(Mywindow):
         self.customContextMenuRequested.connect(self.show_menu)
         self.context_menu = QtWidgets.QMenu(self)
         self.menu_copy_path = self.context_menu.addAction('复制路径')
-        self.menu_samesp = self.context_menu.addAction('还原样本')
+        self.menu_samesp = self.context_menu.addAction('同步样本')
         self.menu_nextsp = self.context_menu.addAction('下一样本')
         self.menu_copy_path.triggered.connect(self.copy_path)
         self.menu_samesp.triggered.connect(self.same_sample)
