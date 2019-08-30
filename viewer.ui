@@ -317,7 +317,6 @@
     <property name="title">
      <string>视图</string>
     </property>
-    <addaction name="actionnormalize"/>
     <addaction name="actionlines"/>
     <addaction name="actionarrows"/>
     <addaction name="actionnewwindow"/>
@@ -327,11 +326,13 @@
     <addaction name="actionsamesp"/>
     <addaction name="actionnextsp"/>
     <addaction name="actionlastsp"/>
+    <addaction name="actionclearview"/>
    </widget>
    <widget class="QMenu" name="menu_3">
     <property name="title">
      <string>处理</string>
     </property>
+    <addaction name="actionnormalize"/>
     <addaction name="actionet2tc"/>
     <addaction name="actiontc2wt"/>
     <addaction name="actionwt2et"/>
@@ -532,10 +533,10 @@
   </action>
   <action name="actionrestoreslinum">
    <property name="text">
-    <string>还原idx</string>
+    <string>同步Index</string>
    </property>
    <property name="toolTip">
-    <string>从视图信息中还原切片序号</string>
+    <string>同步到视图信息中切片序号</string>
    </property>
   </action>
   <action name="actionrmregion">
@@ -580,7 +581,7 @@
   </action>
   <action name="actionsamesp">
    <property name="text">
-    <string>同样本</string>
+    <string>同步样本</string>
    </property>
    <property name="toolTip">
     <string>在当前文件夹中寻找保存的视图信息中的同名样本</string>
@@ -610,6 +611,14 @@
   <action name="actionarrows">
    <property name="text">
     <string>方向箭头</string>
+   </property>
+  </action>
+  <action name="actionclearview">
+   <property name="text">
+    <string>清除窗口</string>
+   </property>
+   <property name="toolTip">
+    <string>清除打开的文件信息和视图信息</string>
    </property>
   </action>
  </widget>

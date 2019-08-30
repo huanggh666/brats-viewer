@@ -107,12 +107,18 @@ class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
         
     def save(self):
         if self.current:
-            img_nib = nib.AnalyzeImage(self.img_data.astype('int16'), None)
-            nib.save(img_nib, self.current)
+            reply = QMessageBox.question(self,'保存','保存会覆盖当前文件，是否保存？',
+                                     QMessageBox.Yes|QMessageBox.No, QMessageBox.No) 
+            if reply == QMessageBox.Yes:
+                img_nib = nib.AnalyzeImage(self.img_data.astype('int16'), None)
+                nib.save(img_nib, self.current)
     
     def saveas(self):
         if self.current:
-            filename = QFileDialog.getSaveFileName(self, "保存","E:/", 'imge(*.nii.gz *.nii)')
+            desktoppath = os.path.join(os.path.expanduser("~"), 'Desktop')
+            file_name = os.path.basename(self.current)
+            full_path = f'{desktoppath}/{file_name}'
+            filename = QFileDialog.getSaveFileName(self, "保存", full_path, 'imge(*.nii.gz *.nii)')
             if filename[0]:
                 img_nib = nib.AnalyzeImage(self.img_data.astype('int16'), None)
                 nib.save(img_nib, filename[0])
@@ -176,11 +182,12 @@ class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
             
     def nii_read(self):     
         '读取.nii或者.mha图像'
-        print(self.current)#--------------
+        # print(self.current)#--------------
         if os.path.isfile(self.current):
             if self.current.endswith('.nii.gz') or self.current.endswith('.nii.gz'):
                 img_nib = nib.load(self.current)
-                if len(img_nib.get_data().shape) != 3:
+                dim = len(img_nib.get_data().shape)
+                if dim != 3 and dim != 4:
                     return
                 self.img_data = img_nib.get_data()
                 if self.img_data.min()<0:
@@ -286,7 +293,7 @@ class Mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
     
     def fusion(self):
         def read_data(filename):
-            if filename.endswith('.nii'):
+            if filename.endswith('.nii') or filename.endswith('.nii.gz'):
                 img_nib = nib.load(filename)
                 if len(img_nib.get_data().shape) != 3:
                     return
@@ -486,6 +493,7 @@ class ExtendWindow(Mywindow):
         self.actionsamesp.triggered.connect(self.same_sample)
         self.actionhist.triggered.connect(self.histotram)
         self.actioncopy_path.triggered.connect(self.copy_path)
+        self.actionclearview.triggered.connect(self.clearview)
         
         self.remove_region_flag = False
         self.remove_label_flag = False
@@ -517,6 +525,14 @@ class ExtendWindow(Mywindow):
         self.current = file_names[idx]
         self.get_names()
         self.nii_read()
+        
+    def clearview(self):
+        self.current = ''
+        for i in range(1,4):
+            getattr(self, f'label_{i}').clear()
+        self.label_4.setText('sagittal')
+        self.label_5.setText('coronal')
+        self.label_6.setText('axial')
         
     def open_directory(self):
         full_path = self.current
